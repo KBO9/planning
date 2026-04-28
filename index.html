@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dispatch CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a;--bg2:#1e293b;--sf:#1e293b;--sf2:#334155;--sf3:#475569;
+  --bd:#334155;--bd2:#475569;
+  --tx:#f8fafc;--tx2:#cbd5e1;--tx3:#94a3b8;
+  --ac:#60a5fa;--ac2:#3b82f6;--acg:rgba(96,165,250,.15);
+  --gn:#4ade80;--gnb:rgba(74,222,128,.12);--gnsolid:#22c55e;
+  --or:#fb923c;--orb:rgba(251,146,60,.12);
+  --rd:#f87171;--rdb:rgba(248,113,113,.1);
+  --yl:#facc15;--ylb:rgba(250,204,21,.12);
+  --pr:#a78bfa;--prb:rgba(167,139,250,.12);
+  --cy:#22d3ee;--cyb:rgba(34,211,238,.1);
+  /* Calendar type colors - VIBRANT */
+  --c-work:#3b82f6;--c-work-bg:#1e3a5f;--c-work-tx:#93c5fd;
+  --c-rps:#8b5cf6;--c-rps-bg:#2e1f5e;--c-rps-tx:#c4b5fd;
+  --c-conge:#10b981;--c-conge-bg:#064e3b;--c-conge-tx:#6ee7b7;
+  --c-ferie:#f59e0b;--c-ferie-bg:#451a03;--c-ferie-tx:#fcd34d;
+  --c-off-bg:#1a2236;--c-off-bd:#2a3450;--c-off-tx:#64748b;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);height:100%;overflow:hidden;display:flex;flex-direction:column}
+button{cursor:pointer;font-family:inherit}input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--bg2);flex-shrink:0}
+.topbar h1{font-size:16px;font-weight:700}.topbar h1 span{color:var(--ac)}
+.topbar-btns{display:flex;gap:5px}
+.topbar-btns button{background:var(--sf2);border:1px solid var(--bd);color:var(--tx2);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.inner{padding:12px 12px 20px;max-width:1400px;margin:0 auto}
+.bnav{display:flex;border-top:1px solid var(--bd);background:var(--bg2);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 2px 6px;color:var(--tx3);font-size:8px;font-weight:500;gap:2px;border:none;background:none}
+.bni.on{color:var(--ac)}
+.bni svg{width:20px;height:20px}
+.side{display:none}
+
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.pt{font-size:17px;font-weight:700}.pt small{font-size:11px;color:var(--tx2);font-weight:400;margin-left:5px}
+.pa{display:flex;gap:5px;flex-wrap:wrap}
+.hb{padding:7px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);font-size:11px;font-weight:600;white-space:nowrap}
+.hb:active{background:var(--sf2)}.hb.pri{background:var(--ac2);border-color:var(--ac2);color:#fff}
+.grid{display:grid;gap:10px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.ct{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:3px}
+.cv{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1.1}
+.fr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.fr label{font-size:11px;color:var(--tx2);min-width:60px;font-weight:500;flex-shrink:0}
+.fr select,.fr input{background:var(--bg);border:1px solid var(--bd);color:var(--tx);border-radius:7px;padding:8px 10px;font-size:13px;flex:1;min-width:0}
+.fr input:focus,.fr select:focus{outline:none;border-color:var(--ac)}
+.fr input[type=time],.fr input[type=number]{font-family:'JetBrains Mono',monospace}
+.btn{padding:9px 16px;border-radius:8px;border:none;font-size:12px;font-weight:600}
+.bp{background:var(--ac2);color:#fff}.bd{background:var(--rdb);color:var(--rd)}.bg2{background:var(--sf2);color:var(--tx2);border:1px solid var(--bd)}.bgn{background:var(--gnsolid);color:#fff}
+.badge{display:inline-flex;font-size:9px;padding:2px 6px;border-radius:5px;font-weight:600}
+.bgen{background:var(--acg);color:var(--ac)}.bok{background:var(--gnb);color:var(--gn)}
+
+/* ═══ CALENDAR — VIBRANT ═══ */
+.cpill{display:flex;gap:3px;margin-bottom:8px;overflow-x:auto;padding-bottom:4px}
+.cpill::-webkit-scrollbar{display:none}
+.cpill span{padding:4px 10px;border-radius:5px;background:var(--bg);border:1px solid var(--bd);color:var(--tx3);font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.cpill span.on{background:var(--ac2);border-color:var(--ac2);color:#fff}
+.cnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cnav button{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);width:32px;height:32px;border-radius:7px;font-size:14px;display:flex;align-items:center;justify-content:center}
+.cnav .cm{font-size:14px;font-weight:700;text-transform:capitalize}
+.chd{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:2px}
+.chd span{text-align:center;font-size:9px;color:var(--tx3);font-weight:600;padding:4px 0}
+.cbd{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+
+.c{border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;border:2px solid transparent;position:relative;overflow:hidden;min-height:54px;padding:3px 1px;gap:1px}
+.c.emp{visibility:hidden}
+.c:active{transform:scale(.95)}
+.c.tod{border-color:var(--ac)!important;box-shadow:0 0 0 2px rgba(96,165,250,.25)}
+.c.sel{background:var(--ac2)!important;color:#fff!important;border-color:#fff!important}
+.c.sel .ctime{color:rgba(255,255,255,.85)!important}
+.c.sel .clbl{color:rgba(255,255,255,.7)!important}
+
+/* WORK — Blue vivid */
+.c.tw{background:var(--c-work-bg);border-color:rgba(59,130,246,.35);color:var(--c-work-tx)}
+.c.tw .ctime{color:var(--c-work-tx)}
+/* RPS — Purple */
+.c.tr{background:var(--c-rps-bg);border-color:rgba(139,92,246,.3);color:var(--c-rps-tx)}
+.c.tr .clbl{color:var(--c-rps-tx)}
+/* CONGE — Green */
+.c.tc{background:var(--c-conge-bg);border-color:rgba(16,185,129,.3);color:var(--c-conge-tx)}
+/* FERIE — Amber/Gold */
+.c.tf{background:var(--c-ferie-bg);border-color:rgba(245,158,11,.4);color:var(--c-ferie-tx)}
+.c.tf .ctime{color:var(--c-ferie-tx)}
+/* OFF — Gray subtle */
+.c.toff{background:var(--c-off-bg);border:1px dashed var(--c-off-bd);color:var(--c-off-tx)}
+.c.toff .clbl{color:var(--c-off-tx)}
+.c.gen{opacity:.6}
+
+.ctime{font-family:'JetBrains Mono',monospace;font-size:8px;line-height:1.1;letter-spacing:-.3px}
+.clbl{font-size:8px;font-weight:700;letter-spacing:.3px}
+.cfer{position:absolute;top:1px;right:2px;font-size:6px}
+
+.dp{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-top:12px;box-shadow:var(--shadow)}
+
+/* SALARY */
+.shero{text-align:center;padding:20px 14px;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.08));border:1px solid var(--bd);border-radius:14px;margin-bottom:14px}
+.shero .sa{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:800;color:var(--gn)}
+.shero .ss{font-size:10px;color:var(--tx2);margin-top:4px}
+.ptbl{width:100%;border-collapse:collapse;font-size:11px}
+.ptbl th{text-align:left;padding:8px;font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;border-bottom:2px solid var(--bd)}
+.ptbl td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ptbl tr:last-child td{border-bottom:none}
+.ptbl tr:hover td{background:rgba(255,255,255,.03)}
+.ptbl .am{font-family:'JetBrains Mono',monospace;font-weight:600;text-align:right}
+.tg{font-size:7px;padding:2px 4px;border-radius:3px;font-weight:700;margin-right:1px}
+.tn{background:var(--prb);color:var(--pr)}.td2{background:var(--ylb);color:var(--yl)}.tfe{background:rgba(245,158,11,.15);color:#fbbf24}.ts{background:var(--orb);color:var(--or)}
+
+/* SAVINGS */
+.svhero{text-align:center;padding:20px 14px;background:linear-gradient(135deg,rgba(74,222,128,.06),rgba(34,211,238,.06));border:1px solid var(--bd);border-radius:14px;margin-bottom:14px}
+.svhero .sva{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:800;color:var(--gn)}
+.pot{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.pottop{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.potico{font-size:22px;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.potinf{flex:1;min-width:0}.potnm{font-size:13px;font-weight:700}.potbl{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;margin-top:1px}
+.potgl{font-size:9px;color:var(--tx3);margin-top:1px}
+.potbar{height:7px;background:var(--bg);border-radius:4px;overflow:hidden;margin:6px 0 3px}.potbf{height:100%;border-radius:4px}
+.potpct{font-size:9px;color:var(--tx2);display:flex;justify-content:space-between}
+.potbtns{display:flex;gap:4px;margin-top:10px}
+.potbtns button{flex:1;padding:8px 4px;border-radius:7px;border:1px solid var(--bd);font-size:10px;font-weight:600;background:var(--bg);color:var(--tx2)}
+.potbtns .pa2{border-color:rgba(74,222,128,.3);color:var(--gn);background:var(--gnb)}
+.potbtns .po2{border-color:rgba(248,113,113,.2);color:var(--rd);background:var(--rdb)}
+.phist{margin-top:8px;border-top:1px solid var(--bd);padding-top:6px;display:none}.phist.open{display:block}
+.phr{display:flex;justify-content:space-between;padding:3px 0;font-size:9px}
+.nwpot{border:2px dashed var(--bd);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:80px;color:var(--tx3);font-size:13px;font-weight:600}
+.sb{margin-bottom:8px}
+.sbt{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px}.sbt .sl{color:var(--tx2)}.sbt .sv{font-family:'JetBrains Mono',monospace;font-weight:600}
+.sbk{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}.sbf{height:100%;border-radius:3px}
+
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
+.mbg.on{display:flex}
+.mbox{background:var(--sf);border:1px solid var(--bd);border-radius:16px 16px 0 0;width:100%;max-width:500px;padding:20px;max-height:75vh;overflow-y:auto}
+.mbox h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.mbox h3 button{background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer}
+
+/* ═══ KPI cards with color accent ═══ */
+.kcard{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;box-shadow:var(--shadow);border-left:4px solid var(--bd);position:relative;overflow:hidden}
+.kcard::after{content:'';position:absolute;top:0;left:0;bottom:0;width:4px}
+.kcard.kc-blue{border-left-color:var(--ac)}
+.kcard.kc-purple{border-left-color:var(--pr)}
+.kcard.kc-green{border-left-color:var(--gn)}
+.kcard.kc-orange{border-left-color:var(--or)}
+.kcard.kc-cyan{border-left-color:var(--cy)}
+.kcard.kc-yellow{border-left-color:var(--yl)}
+
+/* DESKTOP */
+@media(min-width:860px){
+  body{flex-direction:row}.topbar{display:none}.bnav{display:none}
+  .side{display:flex;flex-direction:column;width:230px;background:var(--bg2);border-right:1px solid var(--bd);height:100vh;flex-shrink:0}
+  .side-logo{padding:18px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+  .side-logo .ico{width:34px;height:34px;background:linear-gradient(135deg,var(--ac2),var(--pr));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff}
+  .side-logo h1{font-size:14px;font-weight:700;line-height:1.2}.side-logo h1 small{display:block;font-size:10px;font-weight:400;color:var(--tx2)}
+  .side-nav{flex:1;padding:10px 8px;overflow-y:auto}
+  .snl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);padding:10px 10px 4px;font-weight:600}
+  .snb{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;border:none;background:transparent;color:var(--tx2);font-size:12px;font-weight:500;border-radius:8px;text-align:left;position:relative}
+  .snb:hover{background:var(--sf2);color:var(--tx)}.snb.on{background:var(--acg);color:var(--ac);font-weight:600}
+  .snb.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--ac);border-radius:0 3px 3px 0}
+  .snb svg{width:17px;height:17px;flex-shrink:0;opacity:.6}.snb.on svg{opacity:1}
+  .side-ft{padding:12px 14px;border-top:1px solid var(--bd);font-size:9px;color:var(--tx3)}
+  .content{flex:1;background:var(--bg)}.inner{padding:22px 28px 40px}
+  .g2d{grid-template-columns:1fr 1fr}.g3d{grid-template-columns:1fr 1fr 1fr}.g4d{grid-template-columns:repeat(4,1fr)}
+  .lsplit{display:grid;grid-template-columns:1fr 370px;gap:16px}
+  .pt{font-size:20px}.cv{font-size:26px}
+  .shero .sa,.svhero .sva{font-size:40px}
+  .c{min-height:60px;font-size:13px}.ctime{font-size:9px}
+  .mbg.on{align-items:center}.mbox{border-radius:16px}
+}
+</style>
+</head>
+<body>
+<aside class="side"><div class="side-logo"><div class="ico">D</div><h1>Dispatch CRM<small>Planning & Suivi</small></h1></div><nav class="side-nav" id="snav"></nav><div class="side-ft">Dispatch CRM v4</div></aside>
+<div class="topbar"><h1>Dispatch <span>CRM</span></h1><div class="topbar-btns"><button onclick="goToday()">📍</button><button onclick="doExport()">📤</button></div></div>
+<div class="content" id="content"><div class="inner" id="mc"></div></div>
+<div class="bnav" id="bnav"></div>
+
+<div class="mbg" id="mPot" onclick="if(event.target===this)closeMod('mPot')"><div class="mbox"><h3 id="mPotT">Objectif<button onclick="closeMod('mPot')">✕</button></h3><div class="fr"><label>Nom</label><input id="pN"></div><div class="fr"><label>Icone</label><select id="pI"><option value="🎯">🎯</option><option value="✈️">✈️</option><option value="🏠">🏠</option><option value="🚗">🚗</option><option value="📱">📱</option><option value="🎓">🎓</option><option value="🏦">🏦</option><option value="🥊">🥊</option><option value="💎">💎</option></select></div><div class="fr"><label>Objectif</label><input type="number" id="pG" step="10"></div><div class="fr"><label>Couleur</label><select id="pC"><option value="#4ade80">Vert</option><option value="#60a5fa">Bleu</option><option value="#fb923c">Orange</option><option value="#a78bfa">Violet</option><option value="#facc15">Jaune</option></select></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn bp" style="flex:1" onclick="savePot()">OK</button><button class="btn bd" id="pDel" style="display:none" onclick="delPot()">Suppr.</button></div></div></div>
+<div class="mbg" id="mTx" onclick="if(event.target===this)closeMod('mTx')"><div class="mbox"><h3 id="mTxT">Transaction<button onclick="closeMod('mTx')">✕</button></h3><div class="fr"><label>Montant</label><input type="number" id="txA" step="0.01"></div><div class="fr"><label>Note</label><input id="txN"></div><button class="btn bgn" style="width:100%;margin-top:8px" onclick="saveTx()">Confirmer</button></div></div>
+<div class="mbg" id="mImp" onclick="if(event.target===this)closeMod('mImp')"><div class="mbox"><h3>Importer<button onclick="closeMod('mImp')">✕</button></h3><textarea id="impA" style="width:100%;min-height:60px;background:var(--bg);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:8px;font-size:10px;font-family:'JetBrains Mono',monospace"></textarea><button class="btn bp" style="width:100%;margin-top:8px" onclick="doImport()">OK</button></div></div>
+
+<script>
+var LS='dcrm5';
+var FER={"2026-01-01":"Jour de l'An","2026-04-06":"Lundi de Paques","2026-05-01":"Fete du Travail","2026-05-08":"Victoire 1945","2026-05-14":"Ascension","2026-05-25":"Lundi de Pentecote","2026-07-14":"Fete nationale","2026-08-15":"Assomption","2026-11-01":"Toussaint","2026-11-11":"Armistice 1918","2026-12-25":"Noel"};
+var gF=function(k){return FER[k]||null};
+var MO=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+var DL=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+var DS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+var REAL={"2026-02-16":{type:"rps"},"2026-02-17":{type:"work",start:"05:00",end:"12:30",ot:0,note:""},"2026-02-18":{type:"work",start:"05:00",end:"12:30",ot:0,note:""},"2026-02-19":{type:"ferie",start:"09:30",end:"17:00",note:"Trav."},"2026-02-20":{type:"work",start:"05:00",end:"13:05",ot:0,note:""},"2026-02-21":{type:"rps"},"2026-02-22":{type:"rps"},"2026-02-23":{type:"work",start:"16:00",end:"00:10",ot:0,note:""},"2026-02-24":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-02-25":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-02-26":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-02-27":{type:"rps"},"2026-02-28":{type:"rps"},"2026-03-01":{type:"work",start:"05:30",end:"13:00",ot:0,note:""},"2026-03-02":{type:"work",start:"05:30",end:"13:00",ot:0,note:""},"2026-03-03":{type:"work",start:"06:08",end:"13:00",ot:0,note:"RET"},"2026-03-04":{type:"work",start:"05:30",end:"13:00",ot:0,note:""},"2026-03-05":{type:"rps"},"2026-03-06":{type:"rps"},"2026-03-07":{type:"work",start:"07:00",end:"14:45",ot:0,note:""},"2026-03-08":{type:"work",start:"10:00",end:"18:00",ot:0,note:""},"2026-03-09":{type:"work",start:"11:00",end:"18:30",ot:0,note:""},"2026-03-10":{type:"work",start:"10:30",end:"18:00",ot:0,note:""},"2026-03-11":{type:"rps"},"2026-03-12":{type:"rps"},"2026-03-13":{type:"work",start:"05:30",end:"13:45",ot:0,note:""},"2026-03-14":{type:"work",start:"05:30",end:"14:15",ot:0,note:""},"2026-03-15":{type:"work",start:"05:30",end:"13:40",ot:0,note:""},"2026-03-16":{type:"work",start:"05:30",end:"13:15",ot:0,note:""},"2026-03-17":{type:"rps"},"2026-03-18":{type:"rps"},"2026-03-19":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-03-20":{type:"work",start:"15:30",end:"23:15",ot:0,note:""},"2026-03-21":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-03-22":{type:"work",start:"15:30",end:"23:30",ot:0,note:""},"2026-03-23":{type:"rps"},"2026-03-24":{type:"rps"},"2026-03-25":{type:"work",start:"05:30",end:"13:00",ot:0,note:""},"2026-03-26":{type:"work",start:"06:00",end:"13:45",ot:0,note:""},"2026-03-27":{type:"work",start:"05:30",end:"13:00",ot:0,note:""},"2026-03-28":{type:"work",start:"06:00",end:"13:30",ot:0,note:""},"2026-03-29":{type:"rps"},"2026-03-30":{type:"rps"},"2026-03-31":{type:"work",start:"14:30",end:"22:40",ot:0,note:""},"2026-04-01":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-04-02":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-04-03":{type:"work",start:"15:30",end:"23:20",ot:0,note:""},"2026-04-04":{type:"rps"},"2026-04-05":{type:"rps"},"2026-04-06":{type:"ferie",start:"09:00",end:"16:30",note:"Paques Trav."},"2026-04-07":{type:"work",start:"09:00",end:"16:30",ot:0,note:""},"2026-04-08":{type:"work",start:"09:00",end:"16:30",ot:0,note:""},"2026-04-09":{type:"rps"},"2026-04-10":{type:"rps"},"2026-04-11":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-04-12":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-04-13":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-04-14":{type:"work",start:"15:30",end:"23:00",ot:0,note:""},"2026-04-15":{type:"rps"},"2026-04-16":{type:"rps"},"2026-04-17":{type:"work",start:"05:00",end:"12:30",ot:0,note:""},"2026-04-18":{type:"work",start:"05:00",end:"12:30",ot:0,note:""},"2026-04-19":{type:"work",start:"04:30",end:"12:00",ot:0,note:""},"2026-04-20":{type:"work",start:"05:00",end:"12:30",ot:0,note:""},"2026-04-21":{type:"rps"},"2026-04-22":{type:"rps"},"2026-04-23":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-04-24":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-04-25":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-04-26":{type:"work",start:"16:00",end:"23:30",ot:0,note:""},"2026-04-27":{type:"rps"},"2026-04-28":{type:"rps"},"2026-04-29":{type:"work",start:"06:00",end:"13:30",ot:0,note:""},"2026-04-30":{type:"work",start:"06:00",end:"13:30",ot:0,note:""},"2026-05-01":{type:"ferie",start:"05:30",end:"13:00",note:"1er Mai Trav."},"2026-05-02":{type:"work",start:"05:30",end:"13:00",ot:0,note:""},"2026-05-03":{type:"rps"},"2026-05-04":{type:"rps"}};
+var ANC=new Date(2026,3,5),SHC=[{s:"09:00",e:"16:30"},{s:"15:30",e:"23:00"},{s:"05:00",e:"12:30"},{s:"16:00",e:"23:30"},{s:"06:00",e:"13:30"},{s:"05:30",e:"13:00"}];
+function aM(t,m){var p=t.split(':'),x=+p[0]*60+ +p[1]+m;if(x<0)x+=1440;if(x>=1440)x-=1440;return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0')}
+function cyd(d){var m=Math.floor((d-ANC)/864e5)%6;return m<0?m+6:m}
+function cyi(d){return Math.floor(Math.floor((d-ANC)/864e5)/6)}
+function genR(days){var s=new Date(2026,4,5),e=new Date(2026,11,31),c=new Date(s);while(c<=e){var k=K(c.getFullYear(),c.getMonth(),c.getDate());if(!days[k]){var cd=cyd(c),ci=cyi(c),isW=cd<=3,fn=gF(k),sh=SHC[((ci%6)+6)%6];if(fn){if(isW)days[k]={type:"ferie",start:sh.s,end:sh.e,note:fn+" Trav.",gen:true};else days[k]={type:"ferie",start:"",end:"",note:fn+" Repos",gen:true}}else if(isW){days[k]={type:"work",start:sh.s,end:aM(sh.e,[0,15,30,-15][cd]),ot:0,note:"",gen:true}}else days[k]={type:"rps",gen:true}}c.setDate(c.getDate()+1)}if(!days["2026-01-01"])days["2026-01-01"]={type:"ferie",start:"",end:"",note:"Jour de l'An",gen:true};return days}
+function DEF(){return{days:{},set:{wH:35,cY:25},rates:{b:12.50,mH:151.67,n:20,s:100,f:100,o1:25,o2:50},pots:[{id:'p1',name:'Urgence',icon:'\uD83C\uDFE6',goal:3000,color:'#4ade80',txs:[]},{id:'p2',name:'Vacances',icon:'\u2708\uFE0F',goal:2000,color:'#60a5fa',txs:[]},{id:'p3',name:'PPL',icon:'\uD83C\uDF93',goal:5000,color:'#a78bfa',txs:[]}]}}
+function load(){try{var s=localStorage.getItem(LS);if(s)return Object.assign(DEF(),JSON.parse(s));var st=DEF();st.days=Object.assign({},REAL);st.days=genR(st.days);return st}catch(e){var st=DEF();st.days=Object.assign({},REAL);st.days=genR(st.days);return st}}
+var S=load(),CY,CM,sel=null,pM,pY,ePot=null,tPot=null,tDir=null,page='dashboard';
+function sv(){localStorage.setItem(LS,JSON.stringify(S))}
+function K(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+function cH(s,e){if(!s||!e)return 0;var a=s.split(':'),b=e.split(':'),d=(+b[0]*60+ +b[1])-(+a[0]*60+ +a[1]);if(d<=0)d+=1440;return d/60}
+function fH(h){var hr=Math.floor(h),mn=Math.round((h-hr)*60);return hr+'h'+(mn?String(mn).padStart(2,'0'):'')}
+function fE(n){return n.toFixed(2).replace('.',',')+'\u00A0\u20AC'}
+function nHr(s,e){var a=s.split(':'),b=e.split(':'),sM=+a[0]*60+ +a[1],eM=+b[0]*60+ +b[1];if(eM<=sM)eM+=1440;var n=0,rg=[[0,360],[1260,1800]];for(var i=0;i<rg.length;i++){var o1=Math.max(sM,rg[i][0]),o2=Math.min(eM,rg[i][1]);if(o2>o1)n+=o2-o1}return n/60}
+function gMD(y,m){var dim=new Date(y,m+1,0).getDate(),w=0,r=0,c=0,f=0,h=0,ot=0;for(var d=1;d<=dim;d++){var dd=S.days[K(y,m,d)];if(!dd)continue;if(dd.type==='work'){w++;h+=cH(dd.start,dd.end);ot+=(dd.ot||0)}if(dd.type==='rps')r++;if(dd.type==='conge')c++;if(dd.type==='ferie'){f++;if(dd.start&&dd.end)h+=cH(dd.start,dd.end)}}return{w:w,r:r,c:c,f:f,h:h,ot:ot}}
+function pBal(p){var s=0;for(var i=0;i<p.txs.length;i++)s+=p.txs[i].amount;return s}
+function tSav(){var s=0;for(var i=0;i<S.pots.length;i++)s+=pBal(S.pots[i]);return s}
+function iW(dt){var d=new Date(Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate()));var dn=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-dn);var ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil(((d-ys)/864e5+1)/7)}
+function closeMod(id){document.getElementById(id).classList.remove('on')}
+function sbar(l,v,c,p){return '<div class="sb"><div class="sbt"><span class="sl">'+l+'</span><span class="sv" style="color:'+c+'">'+v+'</span></div><div class="sbk"><div class="sbf" style="width:'+Math.min(Math.max(p||0,0),100)+'%;background:'+c+'"></div></div></div>'}
+
+var PAGES=[{id:'dashboard',lbl:'Home',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',sec:'Principal'},{id:'planning',lbl:'Planning',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',sec:'Principal'},{id:'salary',lbl:'Salaire',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/></svg>',sec:'Principal'},{id:'savings',lbl:'Epargne',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2"/></svg>',sec:'Principal'},{id:'weeks',lbl:'Semaines',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',sec:'Donnees'},{id:'feries',lbl:'Feries',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>',sec:'Donnees'},{id:'stats',lbl:'Stats',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>',sec:'Donnees'},{id:'config',lbl:'Config',ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82"/></svg>',sec:'Systeme'}];
+var MNAV=['dashboard','planning','salary','savings','config'];
+function buildNav(){var h='',ls='';for(var i=0;i<PAGES.length;i++){var p=PAGES[i];if(p.sec!==ls){h+='<div class="snl">'+p.sec+'</div>';ls=p.sec}h+='<button class="snb'+(page===p.id?' on':'')+'" data-p="'+p.id+'">'+p.ico+' '+p.lbl+'</button>'}document.getElementById('snav').innerHTML=h;document.querySelectorAll('.snb').forEach(function(b){b.addEventListener('click',function(){page=this.dataset.p;render()})});var m='';for(var i=0;i<MNAV.length;i++){var pid=MNAV[i],pg=PAGES.find(function(x){return x.id===pid});m+='<button class="bni'+(page===pid?' on':'')+'" data-p="'+pid+'">'+pg.ico+'<span>'+pg.lbl+'</span></button>'}document.getElementById('bnav').innerHTML=m;document.querySelectorAll('.bni').forEach(function(b){b.addEventListener('click',function(){page=this.dataset.p;render()})})}
+function render(){buildNav();document.getElementById('content').scrollTop=0;var mc=document.getElementById('mc');try{if(page==='dashboard')mc.innerHTML=pgDash();else if(page==='planning')mc.innerHTML=pgPlan();else if(page==='salary')mc.innerHTML=pgSal();else if(page==='savings')mc.innerHTML=pgSav();else if(page==='weeks')mc.innerHTML=pgWk();else if(page==='feries')mc.innerHTML=pgFer();else if(page==='stats')mc.innerHTML=pgStat();else if(page==='config')mc.innerHTML=pgCfg()}catch(err){mc.innerHTML='<div class="card" style="color:var(--rd)">'+err.message+'</div>'}document.querySelectorAll('.c[data-k]').forEach(function(el){el.addEventListener('click',function(){sel=this.dataset.k;render()})});document.querySelectorAll('[data-gm]').forEach(function(el){el.addEventListener('click',function(){CM=parseInt(this.dataset.gm);render()})})}
+
+function pgDash(){var d=gMD(CY,CM),ts=tSav(),r=S.rates,now=new Date();var nw='Aucun';for(var i=0;i<10;i++){var nd=new Date(now);nd.setDate(nd.getDate()+i);var k=K(nd.getFullYear(),nd.getMonth(),nd.getDate()),dd=S.days[k];if(dd&&(dd.type==='work'||(dd.type==='ferie'&&dd.start&&dd.end))){nw=(i===0?"Auj.":i===1?'Demain':DS[nd.getDay()]+' '+nd.getDate()+'/'+(nd.getMonth()+1))+' '+dd.start+'\u2192'+dd.end;break}}var cd=cyd(now),ct=cd<=3?'Travail J'+(cd+1)+'/4':'Repos '+(cd-3)+'/2';return '<div class="ph"><div class="pt">Dashboard<small>'+MO[CM]+' '+CY+'</small></div></div><div class="grid g4d" style="margin-bottom:12px"><div class="kcard kc-blue"><div class="ct">Prochain shift</div><div class="cv" style="color:var(--ac);font-size:15px">'+nw+'</div></div><div class="kcard kc-purple"><div class="ct">Cycle</div><div class="cv" style="color:'+(cd<=3?'var(--ac)':'var(--pr)')+';font-size:16px">'+ct+'</div></div><div class="kcard kc-cyan"><div class="ct">Heures mois</div><div class="cv" style="color:var(--cy)">'+fH(d.h)+'</div><div class="cs2">'+d.w+'j travailles</div></div><div class="kcard kc-green"><div class="ct">Epargne</div><div class="cv" style="color:var(--gn)">'+fE(ts)+'</div></div></div><div class="grid g3d"><div class="kcard kc-blue"><div class="ct">Jours trav.</div><div class="cv" style="color:var(--ac)">'+d.w+'j</div></div><div class="kcard kc-purple"><div class="ct">RPS</div><div class="cv" style="color:var(--pr)">'+d.r+'j</div></div><div class="kcard kc-orange"><div class="ct">Base brut</div><div class="cv" style="color:var(--or)">'+fE(r.mH*r.b)+'</div></div></div>'}
+
+function pgPlan(){var dim=new Date(CY,CM+1,0).getDate(),first=new Date(CY,CM,1),sd=first.getDay()-1,today=new Date();if(sd<0)sd=6;var pills='';for(var m=0;m<12;m++)pills+='<span class="'+(m===CM?'on':'')+'" data-gm="'+m+'">'+MO[m].substring(0,3)+'</span>';var cells='';for(var i=0;i<sd;i++)cells+='<div class="c emp"></div>';for(var d=1;d<=dim;d++){var k=K(CY,CM,d),dd=S.days[k],isT=today.getFullYear()===CY&&today.getMonth()===CM&&today.getDate()===d,fn=gF(k);var cls='c';if(isT)cls+=' tod';if(sel===k)cls+=' sel';if(dd){if(dd.type==='work')cls+=' tw';else if(dd.type==='rps')cls+=' tr';else if(dd.type==='conge')cls+=' tc';else if(dd.type==='ferie')cls+=' tf';if(dd.gen)cls+=' gen'}else if(fn)cls+=' tf';else cls+=' toff';var inner='<span>'+d+'</span>';if(dd&&dd.start&&dd.end){inner+='<span class="ctime">'+dd.start+'</span><span class="ctime">'+dd.end+'</span>'}else if(dd&&dd.type==='rps'){inner+='<span class="clbl" style="color:var(--c-rps-tx)">RPS</span>'}else if(dd&&dd.type==='conge'){inner+='<span class="clbl" style="color:var(--c-conge-tx)">CONGE</span>'}else if(!dd&&!fn){inner+='<span class="clbl">OFF</span>'}if(fn||(dd&&dd.type==='ferie'))inner+='<span class="cfer">\uD83C\uDFDB</span>';cells+='<div class="'+cls+'" data-k="'+k+'">'+inner+'</div>'}
+  var det='<div class="card" style="text-align:center;color:var(--tx3);padding:30px;margin-top:12px">Selectionnez un jour</div>';if(sel){var dd=S.days[sel],sp=sel.split('-'),sy=+sp[0],sm=+sp[1]-1,sd2=+sp[2],date=new Date(sy,sm,sd2),fn=gF(sel);var cd=cyd(date),cl=cd<=3?'J'+(cd+1)+'/4 travail':'R'+(cd-3)+'/2 repos',tv=dd?dd.type:(fn?'ferie':'');var opts='<option value="">--</option><option value="work"'+(tv==='work'?' selected':'')+'>Travail</option><option value="rps"'+(tv==='rps'?' selected':'')+'>RPS</option><option value="conge"'+(tv==='conge'?' selected':'')+'>Conge</option><option value="ferie"'+(tv==='ferie'?' selected':'')+'>Ferie</option>';det='<div class="dp"><div style="font-size:14px;font-weight:700;text-transform:capitalize">'+DL[date.getDay()]+' '+sd2+' '+MO[sm].toLowerCase()+' '+sy+'</div>'+(fn?'<div style="color:var(--yl);font-size:11px;font-weight:600;margin:3px 0">\uD83C\uDFDB '+fn+'</div>':'')+'<div style="font-size:9px;color:var(--tx2);margin-bottom:8px">'+(dd&&dd.gen?'<span class="badge bgen">PRE</span> ':dd?'<span class="badge bok">OK</span> ':'')+cl+'</div>'+(dd&&dd.start&&dd.end?'<div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:var(--ac);margin-bottom:10px">'+dd.start+' \u2192 '+dd.end+' \u00B7 '+fH(cH(dd.start,dd.end))+(dd.note?' \u00B7 '+dd.note:'')+'</div>':'')+'<div class="fr"><label>Type</label><select id="dT">'+opts+'</select></div><div id="wf" style="display:'+(tv==='work'?'block':'none')+'"><div class="fr"><label>Debut</label><input type="time" id="wS" value="'+(dd&&dd.type==='work'?dd.start:'05:00')+'"></div><div class="fr"><label>Fin</label><input type="time" id="wE" value="'+(dd&&dd.type==='work'?dd.end:'14:00')+'"></div><div class="fr"><label>H.Supp</label><input type="number" id="wO" step="0.25" value="'+(dd&&dd.type==='work'?(dd.ot||0):0)+'"></div><div class="fr"><label>Note</label><input id="wN" value="'+(dd&&dd.type==='work'?(dd.note||''):'')+'"></div></div><div id="ff" style="display:'+(tv==='ferie'?'block':'none')+'"><div class="fr"><label>Debut</label><input type="time" id="fS" value="'+(dd&&dd.type==='ferie'?(dd.start||''):'')+'"></div><div class="fr"><label>Fin</label><input type="time" id="fE2" value="'+(dd&&dd.type==='ferie'?(dd.end||''):'')+'"></div><div class="fr"><label>Note</label><input id="fN" value="'+(dd&&dd.type==='ferie'?(dd.note||fn||''):(fn||''))+'"></div></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn bp" onclick="saveDay()">Enregistrer</button><button class="btn bd" onclick="delDay()">Supprimer</button></div></div>'}
+  return '<div class="ph"><div class="pt">Planning</div><div class="pa"><button class="hb" onclick="goToday()">Aujourd\'hui</button></div></div><div class="lsplit"><div><div class="card"><div class="cpill">'+pills+'</div><div class="cnav"><button onclick="prevM()">\u25C0</button><div class="cm">'+MO[CM]+' '+CY+'</div><button onclick="nextM()">\u25B6</button></div><div class="chd"><span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span></div><div class="cbd">'+cells+'</div></div></div><div>'+det+'</div></div>'}
+function prevM(){CM--;if(CM<0){CM=11;CY--}sel=null;render()}function nextM(){CM++;if(CM>11){CM=0;CY++}sel=null;render()}function goToday(){var n=new Date();CY=n.getFullYear();CM=n.getMonth();sel=null;page='planning';render()}
+function saveDay(){if(!sel)return;var t=document.getElementById('dT').value;if(!t)delete S.days[sel];else{var e={type:t};if(t==='work'){e.start=document.getElementById('wS').value;e.end=document.getElementById('wE').value;e.ot=parseFloat(document.getElementById('wO').value)||0;e.note=document.getElementById('wN').value}if(t==='ferie'){e.start=document.getElementById('fS').value;e.end=document.getElementById('fE2').value;e.note=document.getElementById('fN').value}S.days[sel]=e}sv();render()}function delDay(){if(!sel)return;delete S.days[sel];sel=null;sv();render()}
+document.addEventListener('change',function(e){if(e.target.id==='dT'){var v=e.target.value;var wf=document.getElementById('wf'),ff=document.getElementById('ff');if(wf)wf.style.display=v==='work'?'block':'none';if(ff)ff.style.display=v==='ferie'?'block':'none'}});
+
+function pgSal(){var r=S.rates,peM=pM+1,peY=pY;if(peM>11){peM=0;peY++}var ps=new Date(pY,pM,16),pe=new Date(peY,peM,15);var totN=0,totS=0,totF=0,totOT=0,totH=0,wD=0,dayR=[],cur=new Date(ps);while(cur<=pe){var k=K(cur.getFullYear(),cur.getMonth(),cur.getDate()),dd=S.days[k];if(dd&&(dd.type==='work'||dd.type==='ferie')&&dd.start&&dd.end){var tH=cH(dd.start,dd.end),nh=nHr(dd.start,dd.end),isSun=cur.getDay()===0,isFer=!!gF(k)||(dd.type==='ferie'),oH=dd.ot||0;var nB=nh*r.b*(r.n/100),sB=isSun?tH*r.b*(r.s/100):0,fB=isFer?tH*r.b*(r.f/100):0,oB=0;if(oH>0)oB=Math.min(oH,8)*r.b*(r.o1/100)+Math.max(oH-8,0)*r.b*(r.o2/100);totN+=nB;totS+=sB;totF+=fB;totOT+=oB;totH+=tH;wD++;dayR.push({k:k,tH:tH,nh:nh,isSun:isSun,isFer:isFer,oH:oH,pay:tH*r.b+nB+sB+fB+oB,date:new Date(cur)})}cur.setDate(cur.getDate()+1)}var base=r.mH*r.b,grand=base+totN+totS+totF+totOT;var rows='';for(var i=0;i<dayR.length;i++){var x=dayR[i],dn=DS[x.date.getDay()],ds=dn+' '+String(x.date.getDate()).padStart(2,'0')+'/'+(x.date.getMonth()+1);var tg='';if(x.nh>0)tg+='<span class="tg tn">'+fH(x.nh)+'N</span>';if(x.isSun)tg+='<span class="tg td2">DIM</span>';if(x.isFer)tg+='<span class="tg tfe">FER</span>';if(x.oH>0)tg+='<span class="tg ts">+'+x.oH+'</span>';var dd2=S.days[x.k];rows+='<tr><td style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--tx2);white-space:nowrap">'+ds+'</td><td style="font-family:\'JetBrains Mono\',monospace;font-size:10px;white-space:nowrap">'+dd2.start+'\u2192'+dd2.end+'</td><td>'+tg+'</td><td class="am" style="color:var(--gn);font-size:11px">'+fE(x.pay)+'</td></tr>'}return '<div class="ph"><div class="pt">Salaire<small>'+MO[pM]+'</small></div><div class="pa"><button class="hb" onclick="pM--;if(pM<0){pM=11;pY--}render()">\u25C0</button><button class="hb" onclick="pM++;if(pM>11){pM=0;pY++}render()">\u25B6</button></div></div><div class="shero"><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:3px">Brut estime</div><div class="sa">'+fE(grand)+'</div><div class="ss">16/'+String(pM+1).padStart(2,'0')+' au 15/'+String(peM+1).padStart(2,'0')+' \u00B7 '+wD+'j \u00B7 '+fH(totH)+'</div></div><div class="grid g2d" style="margin-bottom:12px"><div class="card"><div class="ct" style="margin-bottom:8px">Decomposition</div>'+sbar('Base',fE(base),'var(--ac)',100)+(totN>0?sbar('Nuit +'+r.n+'%','+'+fE(totN),'var(--pr)',50):'')+(totS>0?sbar('Dim +'+r.s+'%','+'+fE(totS),'var(--yl)',50):'')+(totF>0?sbar('Ferie +'+r.f+'%','+'+fE(totF),'var(--or)',50):'')+(totOT>0?sbar('H.Supp','+'+fE(totOT),'var(--or)',30):'')+'<div style="border-top:2px solid var(--ac);padding-top:6px;margin-top:4px;display:flex;justify-content:space-between;font-weight:700;font-size:13px"><span>TOTAL</span><span style="font-family:\'JetBrains Mono\',monospace;color:var(--gn)">'+fE(grand)+'</span></div></div><div class="card"><div class="ct" style="margin-bottom:8px">Taux</div><div class="fr"><label style="font-size:9px">Hor.</label><input type="number" id="rB" step="0.01" value="'+r.b+'" style="font-size:11px"></div><div class="fr"><label style="font-size:9px">H/mois</label><input type="number" id="rMH" step="0.5" value="'+r.mH+'" style="font-size:11px"></div><div class="fr"><label style="font-size:9px">Nuit%</label><input type="number" id="rN" value="'+r.n+'" style="font-size:11px"></div><div class="fr"><label style="font-size:9px">Dim%</label><input type="number" id="rS" value="'+r.s+'" style="font-size:11px"></div><div class="fr"><label style="font-size:9px">Fer%</label><input type="number" id="rF" value="'+r.f+'" style="font-size:11px"></div><div class="fr"><label style="font-size:9px">Sup1%</label><input type="number" id="rO1" value="'+r.o1+'" style="font-size:11px"></div><div class="fr"><label style="font-size:9px">Sup2%</label><input type="number" id="rO2" value="'+r.o2+'" style="font-size:11px"></div><button class="btn bp" style="width:100%;margin-top:6px" onclick="saveRates()">Sauver</button></div></div><div class="card"><div class="ct" style="margin-bottom:8px">Detail</div><div style="overflow-x:auto"><table class="ptbl"><thead><tr><th>Date</th><th>Shift</th><th>Maj.</th><th style="text-align:right">Brut</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'}
+function saveRates(){var r=S.rates;r.b=parseFloat(document.getElementById('rB').value)||12.5;r.mH=parseFloat(document.getElementById('rMH').value)||151.67;r.n=parseFloat(document.getElementById('rN').value)||20;r.s=parseFloat(document.getElementById('rS').value)||100;r.f=parseFloat(document.getElementById('rF').value)||100;r.o1=parseFloat(document.getElementById('rO1').value)||25;r.o2=parseFloat(document.getElementById('rO2').value)||50;sv();render()}
+
+function pgSav(){var ts=tSav();var pots='';for(var i=0;i<S.pots.length;i++){var p=S.pots[i],b=pBal(p),pct=p.goal?Math.min(Math.round(b/p.goal*100),100):0;var txs=p.txs.slice(-5).reverse(),hist='';for(var j=0;j<txs.length;j++){var t=txs[j];hist+='<div class="phr"><span style="color:var(--tx3);font-family:\'JetBrains Mono\',monospace;font-size:8px">'+t.date+'</span><span style="flex:1;color:var(--tx2);margin:0 4px;font-size:9px">'+(t.note||'')+'</span><span style="font-family:\'JetBrains Mono\',monospace;font-weight:600;font-size:9px;color:'+(t.amount>=0?'var(--gn)':'var(--rd)')+'">'+( t.amount>=0?'+':'')+fE(t.amount)+'</span></div>'}pots+='<div class="pot"><div class="pottop"><div class="potico" style="background:'+p.color+'20">'+p.icon+'</div><div class="potinf"><div class="potnm">'+p.name+'</div><div class="potbl" style="color:'+p.color+'">'+fE(b)+'</div>'+(p.goal?'<div class="potgl">Obj: '+fE(p.goal)+'</div>':'')+'</div></div>'+(p.goal?'<div class="potbar"><div class="potbf" style="width:'+pct+'%;background:'+p.color+'"></div></div><div class="potpct"><span>'+pct+'%</span><span>'+(b>=p.goal?'\u2713':'Reste '+fE(p.goal-b))+'</span></div>':'')+'<div class="potbtns"><button class="pa2" onclick="openTx(\''+p.id+'\',\'in\')">+ Verser</button><button class="po2" onclick="openTx(\''+p.id+'\',\'out\')">- Retirer</button><button onclick="openPotM(\''+p.id+'\')">Modif.</button>'+(txs.length?'<button onclick="document.getElementById(\'ph'+p.id+'\').classList.toggle(\'open\')">Hist.</button>':'')+'</div>'+(txs.length?'<div class="phist" id="ph'+p.id+'">'+hist+'</div>':'')+'</div>'}return '<div class="ph"><div class="pt">Epargne</div><div class="pa"><button class="hb pri" onclick="openPotM()">+ Objectif</button></div></div><div class="svhero"><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:3px">Total</div><div class="sva">'+fE(ts)+'</div></div><div class="grid g2d" style="margin-bottom:10px">'+pots+'</div><div class="nwpot" onclick="openPotM()">+ Ajouter</div>'}
+function openPotM(id){ePot=id||null;document.getElementById('mPotT').textContent=id?'Modifier':'Objectif';document.getElementById('pDel').style.display=id?'block':'none';if(id){var p=S.pots.find(function(x){return x.id===id});if(p){document.getElementById('pN').value=p.name;document.getElementById('pI').value=p.icon;document.getElementById('pG').value=p.goal||'';document.getElementById('pC').value=p.color}}else{document.getElementById('pN').value='';document.getElementById('pG').value=''}document.getElementById('mPot').classList.add('on')}
+function savePot(){var n=document.getElementById('pN').value.trim();if(!n)return alert('Nom?');var i=document.getElementById('pI').value,g=parseFloat(document.getElementById('pG').value)||0,c=document.getElementById('pC').value;if(ePot){var p=S.pots.find(function(x){return x.id===ePot});if(p){p.name=n;p.icon=i;p.goal=g;p.color=c}}else S.pots.push({id:'p'+Date.now(),name:n,icon:i,goal:g,color:c,txs:[]});sv();closeMod('mPot');render()}
+function delPot(){if(!ePot||!confirm('Suppr?'))return;S.pots=S.pots.filter(function(p){return p.id!==ePot});sv();closeMod('mPot');render()}
+function openTx(id,dir){tPot=id;tDir=dir;var p=S.pots.find(function(x){return x.id===id});document.getElementById('mTxT').textContent=dir==='in'?'Verser \u2192 '+p.name:'Retirer \u2190 '+p.name;document.getElementById('txA').value='';document.getElementById('txN').value='';document.getElementById('mTx').classList.add('on')}
+function saveTx(){var a=parseFloat(document.getElementById('txA').value);if(!a||a<=0)return alert('Montant?');var p=S.pots.find(function(x){return x.id===tPot});if(!p)return;var td=new Date();p.txs.push({date:K(td.getFullYear(),td.getMonth(),td.getDate()),amount:tDir==='in'?a:-a,note:document.getElementById('txN').value.trim()||(tDir==='in'?'Versement':'Retrait')});sv();closeMod('mTx');render()}
+
+function pgWk(){var dim=new Date(CY,CM+1,0).getDate(),wks={};for(var d=1;d<=dim;d++){var dt=new Date(CY,CM,d),wk=iW(dt);if(!wks[wk])wks[wk]={h:0,w:0,r:0,f:0,g:false};var dd=S.days[K(CY,CM,d)];if(!dd)continue;if(dd.gen)wks[wk].g=true;if(dd.type==='work'){wks[wk].h+=cH(dd.start,dd.end);wks[wk].w++}if(dd.type==='rps')wks[wk].r++;if(dd.type==='ferie'){wks[wk].f++;if(dd.start&&dd.end)wks[wk].h+=cH(dd.start,dd.end)}}var rows='',keys=Object.keys(wks).sort(function(a,b){return a-b});for(var i=0;i<keys.length;i++){var w=keys[i],x=wks[w];rows+='<tr><td style="font-weight:600">S'+w+(x.g?' <span class="badge bgen">PRE</span>':'')+'</td><td>'+x.w+'j</td><td>'+x.r+'j</td><td>'+(x.f||'-')+'</td><td class="am" style="color:var(--ac)">'+fH(x.h)+'</td></tr>'}return '<div class="ph"><div class="pt">Semaines<small>'+MO[CM]+'</small></div><div class="pa"><button class="hb" onclick="prevM()">\u25C0</button><button class="hb" onclick="nextM()">\u25B6</button></div></div><div class="card"><div style="overflow-x:auto"><table class="ptbl"><thead><tr><th>Sem</th><th>Trav</th><th>RPS</th><th>Fer</th><th style="text-align:right">H</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'}
+function pgFer(){var today=new Date();today.setHours(0,0,0,0);var rows='',entries=Object.entries(FER);for(var i=0;i<entries.length;i++){var k=entries[i][0],n=entries[i][1],sp=k.split('-'),y=+sp[0],m=+sp[1],d=+sp[2];var date=new Date(y,m-1,d),past=date<today,dd=S.days[k],dn=DS[date.getDay()];var st='\u2014';if(dd&&dd.type==='ferie'&&dd.start&&dd.end)st='<span style="font-family:\'JetBrains Mono\',monospace;color:var(--ac);font-size:10px">'+dd.start+'\u2192'+dd.end+'</span>';else if(dd&&dd.type==='ferie')st='<span style="color:var(--gn)">Repos</span>';rows+='<tr style="'+(past?'opacity:.4':'')+'"><td style="font-family:\'JetBrains Mono\',monospace;color:var(--yl);font-size:10px">'+String(d).padStart(2,'0')+'/'+String(m).padStart(2,'0')+'</td><td>'+n+'</td><td>'+dn+'</td><td>'+st+'</td></tr>'}return '<div class="ph"><div class="pt">Feries 2026</div></div><div class="card"><div style="overflow-x:auto"><table class="ptbl"><thead><tr><th>Date</th><th>Nom</th><th>Jour</th><th>Statut</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'}
+function pgStat(){var d=gMD(CY,CM),tgt=S.set.wH*4.33;var yW=0,yR=0,yC=0,yOT=0,yH=0,yF=0;for(var m=0;m<12;m++){var md=gMD(CY,m);yW+=md.w;yR+=md.r;yC+=md.c;yOT+=md.ot;yH+=md.h;yF+=md.f}var cL=S.set.cY-yC;return '<div class="ph"><div class="pt">Stats<small>'+MO[CM]+'</small></div><div class="pa"><button class="hb" onclick="prevM()">\u25C0</button><button class="hb" onclick="nextM()">\u25B6</button></div></div><div class="grid g2d"><div class="card"><div style="font-weight:600;margin-bottom:10px">Mois</div>'+sbar('Heures',fH(d.h),'var(--ac)',d.h/tgt*100)+sbar('Jours',d.w+'j','var(--ac)',d.w/20*100)+sbar('RPS',d.r+'j','var(--pr)',d.r/10*100)+sbar('Feries',d.f+'j','var(--yl)',d.f/2*100)+sbar('H.Supp',fH(d.ot),'var(--or)',Math.min(d.ot/10*100,100))+'</div><div class="card"><div style="font-weight:600;margin-bottom:10px">Annee</div>'+sbar('Heures',fH(yH),'var(--cy)',yH/(tgt*12)*100)+sbar('Jours',yW+'j','var(--ac)',yW/243*100)+sbar('RPS',yR+'j','var(--pr)',yR/122*100)+sbar('Feries',yF+'/11','var(--yl)',yF/11*100)+sbar('Conges',yC+'/'+S.set.cY,'var(--gn)',yC/S.set.cY*100)+sbar('Restants',cL+'j','var(--gn)',Math.max(cL/S.set.cY*100,0))+'</div></div>'}
+function pgCfg(){return '<div class="ph"><div class="pt">Config</div></div><div class="grid g2d"><div class="card"><div style="font-weight:600;margin-bottom:10px">Parametres</div><div class="fr"><label>H/sem</label><input type="number" id="cfH" value="'+S.set.wH+'"></div><div class="fr"><label>Conges/an</label><input type="number" id="cfC" value="'+S.set.cY+'"></div><button class="btn bp" style="width:100%;margin-top:8px" onclick="S.set.wH=parseInt(document.getElementById(\'cfH\').value)||35;S.set.cY=parseInt(document.getElementById(\'cfC\').value)||25;sv();alert(\'OK\')">Sauver</button></div><div class="card"><div style="font-weight:600;margin-bottom:10px">Donnees</div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn bg2" onclick="doExport()">Exporter</button><button class="btn bg2" onclick="document.getElementById(\'mImp\').classList.add(\'on\')">Importer</button><button class="btn bd" onclick="clrGen()">Suppr. prev.</button><button class="btn bd" onclick="if(confirm(\'Reset?\')){localStorage.removeItem(LS);location.reload()}">Reset</button></div></div></div>'}
+function doExport(){navigator.clipboard.writeText(JSON.stringify(S,null,2)).then(function(){alert('Copie!')}).catch(function(){prompt('JSON:',JSON.stringify(S))})}
+function doImport(){try{S=Object.assign(DEF(),JSON.parse(document.getElementById('impA').value));sv();closeMod('mImp');render()}catch(e){alert('Invalide')}}
+function clrGen(){if(!confirm('Suppr?'))return;var keys=Object.keys(S.days);for(var i=0;i<keys.length;i++){if(S.days[keys[i]].gen)delete S.days[keys[i]]}sv();render()}
+var now=new Date();CY=now.getFullYear();CM=now.getMonth();pY=CY;pM=CM;render();
+</script>
+</body>
+</html>
